@@ -2,7 +2,10 @@ const { Console } = require("console");
 const { pool } = require("../db/pgConnect");
 const crypto = require("crypto");
 
-const { setLoggedInUserId, getLoggedInUserId } = require("../controller/usersession");
+const {
+  setLoggedInUserId,
+  getLoggedInUserId,
+} = require("../controller/usersession");
 
 async function signup(req, res) {
   const { username, password, email, divisi } = req.body;
@@ -38,7 +41,7 @@ async function signup(req, res) {
       );
       if (divisi_id.rows.length === 0) {
         return res.status(404).send("Divisi Not Found");
-    }
+      }
     }
 
     const result = await pool.query(
@@ -88,7 +91,8 @@ async function login(req, res) {
     if (result) {
       if (result.rows[0].password == hashedPassword) {
         const LoggedInId = result.rows[0].user_id;
-        setLoggedInUserId(LoggedInId);       
+        setLoggedInUserId(req,LoggedInId);
+        //console.log(getLoggedInUserId(req));
         res.status(200).send(result.rows[0]);
       } else {
         res.status(401).send("Invalid Password");
@@ -101,4 +105,41 @@ async function login(req, res) {
     res.status(500).send("Internal Server Error");
   }
 }
-module.exports = { signup, login };
+
+async function request(req, res) {
+  try {
+    const { title, up_time, insidental, kanal, notes, file_path } = req.body;
+    let requester_id;
+    if (getLoggedInUserId(req)) {
+      requester_id = getLoggedInUserId(req);
+      console.log(requester_id);
+    } else {
+     return res.status(440).send("Login session expired");
+    }
+    if (!title || !up_time || !insidental || !kanal) {
+      return res
+        .status(400)
+        .send(
+          "All fields are required: title, up_date, insidental, kanal, file_path"
+        );
+    }
+    let request_result;
+    if (notes) {
+      request_result = await pool.query(
+        "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,NOTES,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *",
+        [requester_id, title, up_time, insidental, kanal, notes, file_path]
+      );
+    } else {
+      request_result = await pool.query(
+        "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *",
+        [requester_id, title, up_time, insidental, kanal, file_path]
+      );
+    }
+    res.status(200).send(request_result.rows[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
+module.exports = { signup, login, request };
