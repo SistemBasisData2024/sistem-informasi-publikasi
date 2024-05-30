@@ -3,6 +3,7 @@ const app = express();
 const db = require ('./db/pgConnect');
 const cors = require('cors');
 const userRoutes = require("./routes/UserRoute");
+const divisiRoutes = require("./routes/DivisiRoute");
 const session = require('express-session');
 
 app.use(express.json());
@@ -22,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/user", userRoutes);
-
+app.use("/divisi", divisiRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
