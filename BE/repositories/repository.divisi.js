@@ -15,7 +15,7 @@ async function getUsers(req, res) {
       return res.status(440).send("Login session expired");
     }
     const user_result = await pool.query(
-      'SELECT u.USERNAME FROM USERS u JOIN USER_DIVISI ud ON u.USER_ID = ud.USER_ID WHERE ud.DIVISI_ID = (SELECT DIVISI_ID FROM USER_DIVISI WHERE USER_ID = $1) RETURNING *',
+      'SELECT u.USERNAME FROM USERS u JOIN USER_DIVISI ud ON u.USER_ID = ud.USER_ID WHERE ud.DIVISI_ID = (SELECT DIVISI_ID FROM USER_DIVISI WHERE USER_ID = $1)',
       [usersess_id]
     );
     if (user_result.rows.length === 0) {
@@ -38,7 +38,7 @@ async function getKonten(req, res) {
       return res.status(440).send("Login session expired");
     }
     const konten_result = await pool.query(
-      'SELECT k.* FROM KONTEN k JOIN USER_DIVISI ud ON k.REQUESTER_ID = ud.USER_ID WHERE ud.DIVISI_ID = (SELECT DIVISI_ID FROM USER_DIVISI WHERE USER_ID = $1) RETURNING *',
+      'SELECT k.* FROM KONTEN k JOIN USER_DIVISI ud ON k.REQUESTER_ID = ud.USER_ID WHERE ud.DIVISI_ID = (SELECT DIVISI_ID FROM USER_DIVISI WHERE USER_ID = $1)',
       [usersess_id]
     );
     if (konten_result.rows.length === 0) {
