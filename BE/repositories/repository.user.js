@@ -114,7 +114,7 @@ async function request(req, res) {
       requester_id = getLoggedInUserId(req);
       console.log(requester_id);
     } else {
-     return res.status(440).send("Login session expired");
+      return res.status(440).send("Login session expired");
     }
     if (!title || !up_time || !insidental || !kanal) {
       return res
