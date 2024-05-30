@@ -13,7 +13,7 @@ app.use(session({
     secret: 'key',
     resave: false,
     saveUninitialized: true
-  }));
+}));
 
 
 app.use((req, res, next) => {
