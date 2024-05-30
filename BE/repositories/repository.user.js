@@ -88,7 +88,7 @@ async function login(req, res) {
       "SELECT user_id,username,password FROM USERS WHERE USERNAME = $1",
       [username]
     );
-    if (result) {
+    if (result.rows.length > 0) {
       if (result.rows[0].password == hashedPassword) {
         const LoggedInId = result.rows[0].user_id;
         setLoggedInUserId(req,LoggedInId);

@@ -2,11 +2,11 @@ const express = require("express");
 const divisiController = require("../repositories/repository.divisi");
 const router = express.Router();
 
-//STARTS WITH /user
+//STARTS WITH /divisi
 
-//getUsers
+//users
 router.get("/users", divisiController.getUsers);
-//getKonten
+//konten
 router.get("/konten", divisiController.getKonten);
 
 module.exports = router;
