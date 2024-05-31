@@ -65,6 +65,10 @@ async function adminGrant (req,res) {
       return res.status(440).send("Login session expired");
     }
 
+    if (result.rows.length === 0 || result.rows[0].roles !== 'Admin') {
+      return res.status(403).send("Access denied: Admins only");
+    }
+
     if (!username) {
       return res.status(400).send("Username is required");
     }
@@ -99,6 +103,11 @@ async function adminRequest (req, res) {
     } else {
       return res.status(440).send("Login session expired");
     }
+
+    if (result.rows.length === 0 || result.rows[0].roles !== 'Admin') {
+      return res.status(403).send("Access denied: Admins only");
+    }
+
     if (!title || !up_time || !insidental || !kanal) {
       return res
         .status(400)
