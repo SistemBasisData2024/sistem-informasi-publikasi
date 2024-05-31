@@ -8,8 +8,10 @@ const router = express.Router();
 router.post("/login", adminController.adminLogin);
 //grant
 router.put("/grant", adminController.adminGrant);
-//request
-router.post("/request", adminController.adminRequest);
+//postRequest
+router.post("/request", adminController.adminPostRequest);
+//getRequest
+router.get("/request", adminController.adminGetRequest);
 //approve
 router.post("/approve", adminController.adminApprove);
 
