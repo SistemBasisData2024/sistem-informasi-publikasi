@@ -91,7 +91,7 @@ async function login(req, res) {
     if (result.rows.length > 0) {
       if (result.rows[0].password == hashedPassword) {
         const LoggedInId = result.rows[0].user_id;
-        setLoggedInUserId(req,LoggedInId);
+        setLoggedInUserId(req, LoggedInId);
         //console.log(getLoggedInUserId(req));
         res.status(200).send(result.rows[0]);
       } else {
@@ -112,7 +112,6 @@ async function request(req, res) {
     let requester_id;
     if (getLoggedInUserId(req)) {
       requester_id = getLoggedInUserId(req);
-      console.log(requester_id);
     } else {
       return res.status(440).send("Login session expired");
     }
@@ -124,16 +123,31 @@ async function request(req, res) {
         );
     }
     let request_result;
-    if (notes) {
-      request_result = await pool.query(
-        "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,NOTES,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *",
-        [requester_id, title, up_time, insidental, kanal, notes, file_path]
-      );
-    } else {
+
+    if (file_path) {
       request_result = await pool.query(
         "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *",
         [requester_id, title, up_time, insidental, kanal, file_path]
       );
+    } else {
+      request_result = await pool.query(
+        "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+        [requester_id, title, up_time, insidental, kanal]
+      );
+    }
+    const kontenId = request_result.rows[0].konten_id;
+    qc_id = await pool.query(
+      "INSERT INTO QUALITY_CONTROL (KONTEN_ID) VALUES ($1) RETURNING QC_ID",
+      [kontenId]
+    );
+    let note_add;
+    if (notes) {
+      if (qc_id.rows.length > 0) {
+        note_add = await pool.query("INSERT INTO NOTES (TAHAP_ID,NOTES) VALUES ($1,$2) RETURNING *",[qc_id.rows[0].qc_id,notes]);
+      }
+      if (!note_add.rows.length > 0){
+        return res.status(500).send("Failed to add note");
+      }
     }
     res.status(200).send(request_result.rows[0]);
   } catch (error) {
