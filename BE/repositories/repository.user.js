@@ -106,7 +106,7 @@ async function login(req, res) {
   }
 }
 
-async function request(req, res) {
+async function request_post(req, res) {
   try {
     const { title, up_time, insidental, kanal, notes, file_path } = req.body;
     let requester_id;
@@ -156,4 +156,21 @@ async function request(req, res) {
   }
 }
 
-module.exports = { signup, login, request };
+  async function request_get(req,res){
+    try{
+      let requester_id;
+      if (getLoggedInUserId(req)) {
+        requester_id = getLoggedInUserId(req);
+      } else {
+        return res.status(440).send("Login session expired");
+      }
+      request_result = await pool.query ("SELECT * FROM KONTEN WHERE REQUESTER_ID = $1",[requester_id]);
+      res.status(200).send(request_result.rows);
+    }
+    catch (error) {
+      console.log(error);
+      res.status(500).send("Internal Server Error");
+  }
+}
+
+module.exports = { signup, login, request_post, request_get };
