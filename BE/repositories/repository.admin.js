@@ -29,7 +29,7 @@ async function adminLogin (req,res) {
     }
 
     result = await pool.query(
-      "SELECT user_id,username,password,roles FROM USERS WHERE USERNAME = $1",
+      "SELECT user_id, username, password, roles FROM USERS WHERE username = $1",
       [username]
     );
 
@@ -56,44 +56,74 @@ async function adminLogin (req,res) {
 }
 
 async function adminGrant (req,res) {
+  const { username } = req.body;
+  try {
+    if (getLoggedInUserId(req)) {
+      usersess_id = getLoggedInUserId(req);
+      console.log(usersess_id);
+    } else {
+      return res.status(440).send("Login session expired");
+    }
 
+    if (!username) {
+      return res.status(400).send("Username is required");
+    }
+
+    result = await pool.query(
+      "SELECT user_id, username FROM USERS WHERE USERNAME = $1",
+      [username]
+    );
+
+    if (result.rows.length > 0) {
+      await pool.query(
+        "UPDATE USERS SET roles = 'Admin' WHERE username = $1",
+        [username]
+      ); 
+      res.status(200).send(`Role of ${username} updated to Admin`);
+    } else {
+      res.status(404).send("User not found");
+    }    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
 }
 
 async function adminRequest (req, res) {
     try {
-      const { title, up_time, insidental, kanal, notes, file_path } = req.body;
-      let requester_id;
-      if (getLoggedInUserId(req)) {
-        requester_id = getLoggedInUserId(req);
-        console.log(requester_id);
-      } else {
-        return res.status(440).send("Login session expired");
-      }
-      if (!title || !up_time || !insidental || !kanal) {
-        return res
-          .status(400)
-          .send(
-            "All fields are required: title, up_date, insidental, kanal, file_path"
-          );
-      }
-      let request_result;
-      if (notes) {
-        request_result = await pool.query(
-          "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,NOTES,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *",
-          [requester_id, title, up_time, insidental, kanal, notes, file_path]
-        );
-      } else {
-        request_result = await pool.query(
-          "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *",
-          [requester_id, title, up_time, insidental, kanal, file_path]
-        );
-      }
-      res.status(200).send(request_result.rows[0]);
-    } catch (error) {
-      console.log(error);
-      res.status(500).send("Internal Server Error");
+    const { title, up_time, insidental, kanal, notes, file_path } = req.body;
+    let requester_id;
+    if (getLoggedInUserId(req)) {
+      requester_id = getLoggedInUserId(req);
+      console.log(requester_id);
+    } else {
+      return res.status(440).send("Login session expired");
     }
+    if (!title || !up_time || !insidental || !kanal) {
+      return res
+        .status(400)
+        .send(
+          "All fields are required: title, up_date, insidental, kanal, file_path"
+        );
+    }
+    let request_result;
+    if (notes) {
+      request_result = await pool.query(
+        "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,NOTES,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *",
+        [requester_id, title, up_time, insidental, kanal, notes, file_path]
+      );
+    } else {
+      request_result = await pool.query(
+        "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *",
+        [requester_id, title, up_time, insidental, kanal, file_path]
+      );
+    }
+    res.status(200).send(request_result.rows[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
   }
+}
 
 async function adminApprove (req, res) {
 
