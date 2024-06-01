@@ -89,64 +89,7 @@ async function adminGrant (req,res) {
   }
 }
 
-async function adminPostRequest (req, res) {
-    try {
-    const { title, up_time, insidental, kanal, notes, file_path } = req.body;
-    let requester_id;
-    if (getLoggedInUserId(req)) {
-      requester_id = getLoggedInUserId(req);
-      console.log(requester_id);
-    } else {
-      return res.status(440).send("Login session expired");
-    }
-
-    if (result.rows.length === 0 || result.rows[0].roles !== 'Admin') {
-      return res.status(403).send("Access denied: Admins only");
-    }
-
-    if (!title || !up_time || !insidental || !kanal) {
-      return res
-        .status(400)
-        .send(
-          "All fields are required: title, up_date, insidental, kanal, file_path"
-        );
-    }
-
-    let request_result;
-    if (file_path) {
-      request_result = await pool.query(
-        "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *",
-        [requester_id, title, up_time, insidental, kanal, file_path]
-      );
-    } else {
-      request_result = await pool.query(
-        "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL) VALUES ($1,$2,$3,$4,$5) RETURNING *",
-        [requester_id, title, up_time, insidental, kanal]
-      );
-    }
-    const kontenId = request_result.rows[0].konten_id;
-    qc_id = await pool.query(
-      "INSERT INTO QUALITY_CONTROL (KONTEN_ID) VALUES ($1) RETURNING QC_ID",
-      [kontenId]
-    );
-
-    let note_add;
-    if (notes) {
-      if (qc_id.rows.length > 0) {
-        note_add = await pool.query("INSERT INTO NOTES (TAHAP_ID,NOTES) VALUES ($1,$2) RETURNING *",[qc_id.rows[0].qc_id,notes]);
-      }
-      if (!note_add.rows.length > 0){
-        return res.status(500).send("Failed to add note");
-      }
-    }
-    res.status(200).send(request_result.rows[0]);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Internal Server Error");
-  }
-}
-
-async function adminGetRequest (req, res) {
+async function adminRequest (req, res) {
   try{
     let user_id;
     if (getLoggedInUserId(req)) {
@@ -188,4 +131,4 @@ async function adminApprove (req, res) {
   }
 }
 
-module.exports = { adminLogin, adminGrant, adminPostRequest, adminGetRequest, adminApprove };
+module.exports = { adminLogin, adminGrant, adminRequest, adminApprove };
