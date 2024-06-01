@@ -169,7 +169,22 @@ async function adminGetRequest (req, res) {
 
 async function adminApprove (req, res) {
   try {
+    const { konten_id } = req.body;
+    let user_id;
+    if (getLoggedInUserId(req)) {
+      user_id = getLoggedInUserId(req);
+    } else {
+      return res.status(440).send("Login session expired");
+    }
+
+    if (result.rows.length === 0 || result.rows[0].roles !== 'Admin') {
+      return res.status(403).send("Access denied: Admins only");
+    }
+
     
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
   }
 }
 
