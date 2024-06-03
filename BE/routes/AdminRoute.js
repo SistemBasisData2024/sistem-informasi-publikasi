@@ -1,6 +1,5 @@
 const express = require("express");
 const adminController = require("../repositories/repository.admin");
-const userController = require("../repositories/repository.user");
 const router = express.Router();
 
 //STARTS WITH /admin
@@ -9,11 +8,11 @@ const router = express.Router();
 router.post("/login", adminController.adminLogin);
 //grant
 router.put("/grant", adminController.adminGrant);
-//postRequest
-router.post("/request", userController.request_post);
 //getRequest
-router.get("/request", adminController.adminRequest);
+router.get("/request", adminController.adminGetRequest);
 //approve
-router.post("/approve", adminController.adminApprove);
+router.put("/approve", adminController.adminApprove);
+//users
+router.get("/users", adminController.adminGetUsers);
 
 module.exports = router;

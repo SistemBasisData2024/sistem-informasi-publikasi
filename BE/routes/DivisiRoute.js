@@ -9,4 +9,6 @@ router.get("/users", divisiController.getUsers);
 //konten
 router.get("/konten", divisiController.getKonten);
 
+router.get("",divisiController.getDivisi);
+
 module.exports = router;
