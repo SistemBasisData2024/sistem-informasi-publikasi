@@ -163,4 +163,30 @@ async function adminApprove(req, res) {
   }
 }
 
-module.exports = { adminLogin, adminGrant, adminGetRequest, adminApprove };
+async function adminGetUsers(req,res){
+  try {
+    let user_id;
+    if (getLoggedInUserId(req)) {
+      user_id = getLoggedInUserId(req);
+    } else {
+      return res.status(440).send("Login session expired");
+    }
+    result = await pool.query("SELECT * FROM USERS WHERE USER_ID = $1", [
+      user_id,
+    ]);
+    if (result.rows.length === 0 || result.rows[0].roles !== "Admin") {
+      return res.status(403).send("Access denied: Admins only");
+    }
+    users = await pool.query("SELECT USERNAME, EMAIL, ROLES FROM USERS WHERE USER_ID != $1",[user_id]);
+    if (users.rows.length == 0){
+      return res.status(404).send("No Accounts Found");
+    }
+    return res.status(200).send(users.rows);
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
+module.exports = { adminLogin, adminGrant, adminGetRequest, adminApprove, adminGetUsers };

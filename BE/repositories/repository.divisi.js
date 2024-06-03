@@ -51,4 +51,18 @@ async function getKonten(req, res) {
   }
 }
 
-module.exports = { getUsers, getKonten };
+async function getDivisi(req,res){
+  try{
+    divisi_list = await pool.query("SELECT * FROM DIVISI");
+    if (divisi_list.rows.length == 0){
+      return res.status(404).send("Divisi Not Found");
+    }
+    res.status(200).send(divisi_list.rows);
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
+module.exports = { getUsers, getKonten, getDivisi };
