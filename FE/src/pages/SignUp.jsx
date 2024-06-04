@@ -1,5 +1,4 @@
-// /FE/src/pages/SignUp.jsx
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signUp } from "../actions/user.actions";
 import { fetchDivisi } from "../actions/divisi.actions";
@@ -14,18 +13,18 @@ const SignUp = () => {
   });
   const [message, setMessage] = useState("");
   const [divisiList, setDivisiList] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const getDivisi = async () => {
       try {
         const response = await fetchDivisi();
-        setDivisiList(response.data);
+        setDivisiList(response);
       } catch (error) {
         console.error("Failed to fetch divisi", error);
       }
     };
+
     getDivisi();
   }, []);
 
@@ -38,20 +37,18 @@ const SignUp = () => {
   };
 
   const handleDivisiSelect = (divisi) => {
-    setFormData({
-      ...formData,
-      divisi: divisi.id,
-    });
+    console.log(divisi);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      divisi: divisi.name,
+    }));
+    
   };
 
   const handleSubmit = async (e) => {
+    console.log(formData)
     e.preventDefault();
-    if (
-      !formData.username ||
-      !formData.email ||
-      !formData.password ||
-      !formData.divisi
-    ) {
+    if (!formData.username || !formData.email || !formData.password || !formData.divisi) {
       setMessage("All fields are required: username, email, password, divisi");
       return;
     }
@@ -103,7 +100,11 @@ const SignUp = () => {
             <label htmlFor="divisi" className="block text-blue-900">
               Divisi
             </label>
-            <Dropdown items={divisiList} onSelect={handleDivisiSelect} />
+            <Dropdown
+              items={divisiList}
+              onSelect={handleDivisiSelect}
+              selected={divisiList.find(item => item.id === formData.divisi)} 
+            />
           </div>
           <div className="mb-8">
             <label htmlFor="password" className="block text-blue-900">
