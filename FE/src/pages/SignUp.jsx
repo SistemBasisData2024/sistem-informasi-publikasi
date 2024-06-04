@@ -63,7 +63,7 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-200 to-blue-500">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+      <div className="max-w-md w-full glass p-8 rounded-lg shadow-lg">
         <h2 className="text-3xl text-blue-900 font-bold text-center mb-8">
           Sign Up for SIP
         </h2>

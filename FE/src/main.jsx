@@ -5,6 +5,8 @@ import App from './App.jsx'
 import './index.css'
 import Login from './pages/Login.jsx';
 import SignUp from './pages/SignUp.jsx';
+import Home from './pages/Home.jsx';
+import Publikasi from './pages/Publikasi.jsx';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
   {
     path: 'signup',
     element: <SignUp />,
+  },
+  {
+    path: 'home',
+    element: <Home />,
+  },
+  {
+    path: 'publikasi',
+    element: <Publikasi />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(
