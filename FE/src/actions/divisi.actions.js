@@ -9,7 +9,7 @@ const baseApiResponse = (data, isSuccess) => {
 
 export const fetchDivisi = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/divisi`);
+        const response = await axios.get(`http://localhost:8463/divisi`);
         return response.data;
     } catch (error) {
         console.error("Failed to fetch divisi:", error);
