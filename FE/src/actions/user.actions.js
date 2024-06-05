@@ -1,4 +1,4 @@
-import axios from "axios";
+import instance from "./axios";
 
 const baseApiResponse = (data, isSuccess) => {
   return {
@@ -9,7 +9,7 @@ const baseApiResponse = (data, isSuccess) => {
 
 export const signUp = async (formData) => {
   try {
-    const response = await axios.post(
+    const response = await instance.post(
       "http://localhost:8463/user/signup",
       formData,
       {
@@ -29,7 +29,7 @@ export const signUp = async (formData) => {
 
 export const login = async (formData) => {
   try {
-    const response = await axios.post(
+    const response = await instance.post(
       "http://localhost:8463/user/login",
       formData,
       {
@@ -49,7 +49,7 @@ export const login = async (formData) => {
 
 export const request = async (formData) => {
   try {
-    const response = await axios.post(
+    const response = await instance.post(
       "http://localhost:8463/user/request_post",
       formData,
       {
@@ -69,10 +69,22 @@ export const request = async (formData) => {
 
 export const getKonten = async () => {
   try {
-    const response = await axios.get("http://localhost:8463/user/request_get");
+    const response = await instance.get("http://localhost:8463/user/request_get");
     return response;
   } catch (error) {
     console.error("Failed to fetch data:", error);
     return { data: [] };
   }
 };
+
+export const getUser = async () => {
+  try {
+    const response = await instance.get("http://localhost:8463/user");
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error("Failed to fetch data:", error);
+    return { data: [] };
+  }
+};
+
