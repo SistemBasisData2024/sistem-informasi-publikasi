@@ -9,6 +9,7 @@ import Home from './pages/Home.jsx';
 import Publikasi from './pages/Publikasi.jsx';
 import Request from './pages/Request.jsx';
 import Dashboard from './pages/Dashboard.jsx'
+import Detail from './pages/Detail.jsx'
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: 'dashboard',
     element: <Dashboard />,
+  },
+  {
+    path: 'detail',
+    element: <Detail />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(

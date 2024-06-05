@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Cards = ({ title, desc, url }) => {
+const Cards = ({ title, desc, url, imgSrc }) => {
   return (
     <div className="card w-full sm:w-80 bg-white shadow-lg rounded-lg overflow-hidden">
-      <figure>
+      <figure className="flex justify-center items-center bg-gray-100">
         <img
-          src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-          alt="Shoes"
-          className="w-full h-48 object-cover"
+          src={imgSrc}
+          alt={title}
+          className="w-full h-full"
         />
       </figure>
       <div className="p-4 flex flex-col justify-between h-full">

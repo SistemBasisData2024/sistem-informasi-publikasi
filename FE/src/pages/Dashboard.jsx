@@ -28,9 +28,13 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500 text-3xl text-blue-900 font-bold items-center justify-center">
+      <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500 items-center justify-center">
+        <span class="items-center justify-center loading loading-spinner loading-lg text-blue-800"></span>
+        <div className=" to-blue-500 text-3xl text-blue-900 font-bold ">
         Loading...
       </div>
+      </div>
+
     );
   }
 
