@@ -19,7 +19,14 @@ const Request = () => {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleBadgeClick = (kanal) => {
+    setFormData({
+      ...formData,
+      kanal,
     });
   };
 
@@ -44,14 +51,24 @@ const Request = () => {
     }
   };
 
+  const badges = [
+    { label: 'IG Feed', className: 'btn btn-outline' },
+    { label: 'IG Story', className: 'btn btn-outline' },
+    { label: 'TikTok', className: 'btn btn-outline' },
+    { label: 'Twitter/X', className: 'btn btn-outline' },
+    { label: 'Line OA', className: 'btn btn-outline' },
+    { label: 'YouTube', className: 'btn btn-outline' },
+    { label: 'LinkedIn', className: 'btn btn-outline' },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col bg-white-900">
+    <div className="min-h-screen flex flex-col bg-blue-300">
       <NavBar />
-      <div className="container mx-auto p-4">
-        <h2 className="text-3xl text-white-900 font-bold mb-8">Buat Permintaan Publikasi</h2>
+      <div className="container mx-auto p-8 bg-gradient-to-r from-blue-800 to-blue-800">
+        <h2 className="text-3xl text-white font-bold mb-8">Buat Permintaan Publikasi</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-white-700 mb-2">Judul Konten *</label>
+            <label className="block text-white mb-2">Judul Konten *</label>
             <input
               type="text"
               name="title"
@@ -62,7 +79,7 @@ const Request = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-white-700 mb-2">Tanggal dan Waktu Publikasi *</label>
+            <label className="block text-white mb-2">Tanggal dan Waktu Publikasi *</label>
             <input
               type="datetime-local"
               name="up_time"
@@ -73,9 +90,9 @@ const Request = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-white-700 mb-2">Insidental *</label>
+            <label className="block text-white mb-2">Insidental *</label>
             <div>
-              <label className="mr-2">
+              <label className="mr-2 text-white">
                 <input
                   type="radio"
                   name="insidental"
@@ -86,7 +103,7 @@ const Request = () => {
                 />
                 Ya
               </label>
-              <label>
+              <label className="mr-2 text-white">
                 <input
                   type="radio"
                   name="insidental"
@@ -100,7 +117,7 @@ const Request = () => {
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-white-700 mb-2">Tautan Konten *</label>
+            <label className="block text-white mb-2">Tautan Konten *</label>
             <input
               type="text"
               name="file_path"
@@ -111,18 +128,22 @@ const Request = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-white-700 mb-2">Kanal Publikasi *</label>
-            <input
-              type="text"
-              name="kanal"
-              value={formData.kanal}
-              onChange={handleRequest}
-              className="w-full p-2 border border-white-900 rounded bg-transparent"
-              required
-            />
+            <label className="block text-white mb-2">Kanal Publikasi *</label>
+            <div className="flex flex-wrap gap-2">
+              {badges.map((badge) => (
+                <button
+                  type="button"
+                  key={badge.label}
+                  className={`${badge.className} ${formData.kanal === badge.label ? 'btn-active' : ''}`}
+                  onClick={() => handleBadgeClick(badge.label)}
+                >
+                  {badge.label}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="mb-4">
-            <label className="block text-white-700 mb-2">Tambah Catatan</label>
+            <label className="block text-white mb-2">Tambah Catatan</label>
             <textarea
               name="notes"
               value={formData.notes}
@@ -132,7 +153,7 @@ const Request = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-red-500 text-white py-2">
+            className="w-full rounded-md bg-red-500 text-white py-2 mt-8">
             Request Publikasi
           </button>
         </form>
