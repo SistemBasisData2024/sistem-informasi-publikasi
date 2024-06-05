@@ -129,7 +129,15 @@ async function request_post(req, res) {
     if (file_path) {
       request_result = await pool.query(
         "INSERT INTO KONTEN (REQUESTER_ID,TITLE,UP_TIME,INSIDENTAL,KANAL,TAHAP_ID,FILE_PATH) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *",
-        [requester_id, title, up_time, insidental, kanal, tahap_id.rows[0].id, file_path]
+        [
+          requester_id,
+          title,
+          up_time,
+          insidental,
+          kanal,
+          tahap_id.rows[0].id,
+          file_path,
+        ]
       );
     } else {
       request_result = await pool.query(
@@ -139,12 +147,12 @@ async function request_post(req, res) {
     }
     const kontenId = request_result.rows[0].konten_id;
     let note_add;
-    if (notes) { 
-        note_add = await pool.query(
-          "INSERT INTO NOTES (TAHAP_ID,KONTEN_ID,NOTES) VALUES ($1,$2,$3) RETURNING *",
-          [tahap_id.rows[0].id, kontenId, notes]
-        );
-      
+    if (notes) {
+      note_add = await pool.query(
+        "INSERT INTO NOTES (TAHAP_ID,KONTEN_ID,NOTES) VALUES ($1,$2,$3) RETURNING *",
+        [tahap_id.rows[0].id, kontenId, notes]
+      );
+
       if (!note_add.rows.length > 0) {
         return res.status(500).send("Failed to add note");
       }
@@ -175,24 +183,26 @@ async function request_get(req, res) {
   }
 }
 
-async function getUserById(req,res){
-  try{
+async function getUserById(req, res) {
+  try {
     let requester_id;
     if (getLoggedInUserId(req)) {
       requester_id = getLoggedInUserId(req);
     } else {
       return res.status(440).send("Login session expired");
     }
-    current = await pool.query("SELECT * FROM USERS WHERE USER_ID = $1",[requester_id]);
-    if (current.rows.length==0){
+    current = await pool.query(
+      " SELECT * FROM USERS NATURAL JOIN USER_DIVISI NATURAL JOIN DIVISI WHERE USER_ID = $1",
+      [requester_id]
+    );
+    if (current.rows.length == 0) {
       return res.status(404).send("Account Not Found");
     }
     res.status(200).send(current.rows[0]);
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server Error");
   }
 }
 
-module.exports = { signup, login, request_post, request_get, getUserById};
+module.exports = { signup, login, request_post, request_get, getUserById };
