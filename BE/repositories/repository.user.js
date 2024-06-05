@@ -92,7 +92,7 @@ async function login(req, res) {
       if (result.rows[0].password == hashedPassword) {
         const LoggedInId = result.rows[0].user_id;
         setLoggedInUserId(req, LoggedInId);
-        //console.log(getLoggedInUserId(req));
+        console.log(getLoggedInUserId(req));
         res.status(200).send(result.rows[0]);
       } else {
         res.status(401).send("Invalid Password");
@@ -175,4 +175,24 @@ async function request_get(req, res) {
   }
 }
 
-module.exports = { signup, login, request_post, request_get };
+async function getUserById(req,res){
+  try{
+    let requester_id;
+    if (getLoggedInUserId(req)) {
+      requester_id = getLoggedInUserId(req);
+    } else {
+      return res.status(440).send("Login session expired");
+    }
+    current = await pool.query("SELECT * FROM USERS WHERE USER_ID = $1",[requester_id]);
+    if (current.rows.length==0){
+      return res.status(404).send("Account Not Found");
+    }
+    res.status(200).send(current.rows[0]);
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
+module.exports = { signup, login, request_post, request_get, getUserById};
