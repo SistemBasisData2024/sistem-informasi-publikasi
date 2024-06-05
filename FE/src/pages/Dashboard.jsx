@@ -80,7 +80,7 @@ const Dashboard = () => {
          <aside className="glass p-4 w-full md:w-1/4 lg:w-1/5 shadow-lg rounded-lg m-4 flex flex-col items-start">
           <h2 className="text-2xl font-bold mb-4 text-blue-700">Dashboard Akun</h2>
           <p className="font-semibold text-blue-700 mb-4">Username: <b>{[userData.username]}</b> </p>
-          <p className="font-semibold text-blue-700 mb-4">Divisi: </p> {}
+          <p className="font-semibold text-blue-700 mb-4">Divisi: <b> {[userData.name]} </b> </p>
           <p className="font-semibold text-blue-700 mb-4">Akun di Divisi yang sama:</p>
           <p className="font-semibold text-blue-700 mb-4" dangerouslySetInnerHTML={{ __html: members }} /> 
           <button className="w-full bg-red-500 text-white mt-4 py-2 rounded mb-4">Logout</button>
