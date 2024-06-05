@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 
 const Publikasi = () => {
+    const navigate = useNavigate();
+
+    const navigateToRequest = () => {
+        navigate("/request");
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-blue-800">
             <NavBar className="w-full" />
@@ -49,7 +55,7 @@ const Publikasi = () => {
                     </div>
                 </div>
                 <div className="bg-blue-800 py-8 px-4 w-full flex justify-center">
-                    <button className="bg-blue-100 text-blue-800 px-6 py-3 rounded text-lg font-bold">
+                    <button onClick={navigateToRequest} className="bg-blue-100 text-blue-800 px-6 py-3 rounded text-lg font-bold">
                         Pesan Publikasi
                     </button>
                 </div>
