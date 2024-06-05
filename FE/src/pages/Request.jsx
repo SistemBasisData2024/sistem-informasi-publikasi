@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
-import { request } from "../actions/user.actions";
+import { request } from "../actions/konten.actions";
 
 const Request = () => {
   const [formData, setFormData] = useState({

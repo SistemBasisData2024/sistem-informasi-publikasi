@@ -1,35 +1,61 @@
 import React, { useEffect, useState } from "react";
 import { getKonten } from "../actions/user.actions";
+import { getUser } from "../actions/user.actions";
+import { fetchMembers } from "../actions/divisi.actions";
 import NavBar from "../components/NavBar";
-
 const Dashboard = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [userData, setUserData] = useState({});
+  const [members, setMembers]= useState([]);
 
   useEffect(() => {
-    const getData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await getKonten();
-        if (response.data) {
-          setData(response.data);
+        // Fetch user data
+        const userResponse = await getUser();
+        if (userResponse.data) {
+          setUserData(userResponse.data);
         } else {
-          setError("Failed to fetch data");
+          setError("Failed to fetch user data");
+        }
+
+        // Fetch konten data
+        const kontenResponse = await getKonten();
+        if (kontenResponse.data) {
+          setData(kontenResponse.data);
+        } else {
+          setError("Failed to fetch konten data");
+        }
+
+        // Fetch members
+        const divisiMembers = await fetchMembers();
+        if (divisiMembers) {
+          setMembers(
+            Object.values(divisiMembers)
+              .map(member => String(member.username))
+              .join("<br>")
+          );
+          console.log(divisiMembers);
+        } else {
+          setError("Failed to fetch members");
         }
       } catch (err) {
         setError("Failed to fetch data");
       } finally {
         setLoading(false);
+        
       }
     };
 
-    getData();
+    fetchData();
   }, []);
 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500 items-center justify-center">
-        <span class="items-center justify-center loading loading-spinner loading-lg text-blue-800"></span>
+        <span className="items-center justify-center loading loading-spinner loading-lg text-blue-800"></span>
         <div className=" to-blue-500 text-3xl text-blue-900 font-bold ">
         Loading...
       </div>
@@ -50,12 +76,13 @@ const Dashboard = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500">
       <NavBar className="w-full" />
       <div className="flex flex-col md:flex-row flex-grow">
-        {/* Sidebar */}
-        <aside className="glass p-4 w-full md:w-1/4 lg:w-1/5 shadow-lg rounded-lg m-4 flex flex-col items-start">
+         {/* Sidebar */}
+         <aside className="glass p-4 w-full md:w-1/4 lg:w-1/5 shadow-lg rounded-lg m-4 flex flex-col items-start">
           <h2 className="text-2xl font-bold mb-4 text-blue-700">Dashboard Akun</h2>
-          <p className="font-semibold text-blue-700 mb-4">Username:</p> {/* Harus di fetch*/}
-          <p className="font-semibold text-blue-700 mb-4">Divisi: Biro Multimedia</p> {/* Harus di fetch*/}
-          <p className="font-semibold text-blue-700 mb-4">Akun di Divisi yang sama:</p> {/* Harus di fetch*/}
+          <p className="font-semibold text-blue-700 mb-4">Username: <b>{[userData.username]}</b> </p>
+          <p className="font-semibold text-blue-700 mb-4">Divisi: </p> {}
+          <p className="font-semibold text-blue-700 mb-4">Akun di Divisi yang sama:</p>
+          <p className="font-semibold text-blue-700 mb-4" dangerouslySetInnerHTML={{ __html: members }} /> 
           <button className="w-full bg-red-500 text-white mt-4 py-2 rounded mb-4">Logout</button>
         </aside>
         {/* Main Content */}
