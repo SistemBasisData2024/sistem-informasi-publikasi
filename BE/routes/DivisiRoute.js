@@ -11,4 +11,8 @@ router.get("/konten", divisiController.getKonten);
 
 router.get("/",divisiController.getDivisi);
 
+router.get("/",divisiController.searchKonten);
+
+router.get("/konten",divisiController.getKontenDetails);
+
 module.exports = router;

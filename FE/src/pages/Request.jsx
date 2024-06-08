@@ -158,7 +158,7 @@ const Request = () => {
           </button>
         </form>
         {message && (
-          <div className="mt-4 text-blue-900 text-center">
+          <div className="mt-4 text-white text-center">
             <p>{message}</p>
           </div>
         )}
