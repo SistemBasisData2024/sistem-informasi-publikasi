@@ -153,7 +153,7 @@ const Detail = () => {
           </button>
           {isAdmin && (
             <button
-              onClick={handleDelete}
+              onClick={() => handleDelete(data.konten_id)}
               className="bg-red-500 text-white py-2 px-4 rounded"
             >
               Delete
