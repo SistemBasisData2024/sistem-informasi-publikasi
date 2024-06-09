@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { getUser } from "../actions/user.actions";
 import { fetchMembers, fetchKonten } from "../actions/divisi.actions";
 import { getUserRole, getAllKonten } from "../actions/admin.actions";
+import { fetchTahap } from "../actions/konten.actions";
 import NavBar from "../components/NavBar";
 import DashCards from "../components/DashCards";
 
+import DashCards from "../components/DashCards";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -13,6 +15,7 @@ const Dashboard = () => {
   const [error, setError] = useState("");
   const [userData, setUserData] = useState({});
   const [members, setMembers] = useState([]);
+  const [tahapMapping, setTahapMapping] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,9 +25,26 @@ const Dashboard = () => {
         const userResponse = await getUser();
         if (userResponse.data) {
           setUserData(userResponse.data);
-        } else {
-          setError("Failed to fetch user data");
-        }
+
+          // Fetch members
+          const divisiMembers = await fetchMembers();
+          if (divisiMembers) {
+            const userMap = divisiMembers.reduce((acc, member) => {
+              acc[member.user_id] = member.username;
+              return acc;
+            }, {});
+
+
+            const filteredMembers = Object.values(divisiMembers)
+              .filter(
+                (member) => member.username !== userResponse.data.username
+              ) // Filter out current user
+              .map((member) => String(member.username))
+              .join("<br>");
+            setMembers(filteredMembers);
+          } else {
+            setError("Failed to fetch members");
+          }
 
         const role = await getUserRole();
         if (role === "Admin") {
@@ -44,27 +64,49 @@ const Dashboard = () => {
             setError("Failed to fetch konten data");
           }
         }
+          // Fetch konten data
+          const kontenResponse = await fetchKonten();
+          if (kontenResponse.success) {
+            setData(kontenResponse.data);
 
-        // Fetch members
-        const divisiMembers = await fetchMembers();
-        if (divisiMembers) {
-          setMembers(
-            Object.values(divisiMembers)
-              .map((member) => String(member.username))
-              .join("<br>")
-          );
+          } else {
+            setError("Failed to fetch konten data");
+          }
+
+          // Fetch tahap data
+          const tahapResponse = await fetchTahap();
+          if (tahapResponse.success) {
+            const tahapMap = tahapResponse.data.reduce((acc, tahap) => {
+              acc[tahap.id] = tahap.nama_tahap;
+              return acc;
+            }, {});
+            setTahapMapping(tahapMap);
+          } else {
+            setError("Failed to fetch tahap data");
+          }
         } else {
-          setError("Failed to fetch members");
+          setError("Failed to fetch user data");
         }
       } catch (err) {
         setError("Failed to fetch data");
       } finally {
-        setLoading(false);
+        setLoading(false); // Move setLoading(false) here
       }
     };
 
     fetchData();
+    
   }, []);
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  };
 
   if (loading) {
     return (
@@ -91,20 +133,31 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row flex-grow">
         {/* Sidebar */}
         <aside className="glass p-4 w-full md:w-1/4 lg:w-1/5 shadow-lg rounded-lg m-4 flex flex-col items-start">
-          <h2 className="text-2xl font-bold mb-4 text-blue-700">Dashboard Akun</h2>
+          <h2 className="text-2xl font-bold mb-4 text-blue-700">
+            Dashboard Akun
+          </h2>
           <p className="font-semibold text-blue-700 mb-4">
-            Username: <b>{[userData.username]}</b>{" "}
+            Username: <b>{userData.username}</b>
           </p>
           <p className="font-semibold text-blue-700 mb-4">
-            Divisi: <b> {[userData.name]} </b>{" "}
+            Divisi: <b>{userData.name}</b>
           </p>
-          <p className="font-semibold text-blue-700 mb-4">Akun di Divisi yang sama:</p>
-          <p className="font-semibold text-blue-700 mb-4" dangerouslySetInnerHTML={{ __html: members }} />
-          <button className="w-full bg-red-500 text-white mt-4 py-2 rounded mb-4">Logout</button>
+          <p className="font-semibold text-blue-700 mb-4">
+            Akun di Divisi yang sama:
+          </p>
+          <p
+            className="font-semibold text-blue-700 mb-4"
+            dangerouslySetInnerHTML={{ __html: members }}
+          />
+          <button className="w-full bg-red-500 text-white mt-4 py-2 rounded mb-4">
+            Logout
+          </button>
         </aside>
         {/* Main Content */}
         <main className="flex-1 p-4">
-          <h2 className="text-4xl text-blue-900 font-bold mb-8 py-4">Publikasi Pemohon</h2>
+          <h2 className="text-4xl text-blue-900 font-bold mb-8 py-4">
+            Publikasi Pemohon
+          </h2>
           <div className="mb-4 flex items-center">
             <div className="relative flex-grow mr-2">
               <input
@@ -126,25 +179,43 @@ const Dashboard = () => {
               </svg>
             </div>
             <select className="py-2 px-4 border border-gray-100 rounded bg-transparent text-white">
-              <option value="all" className="bg-blue-500">Status</option>
-              <option value="quality_control" className="bg-blue-500">Quality Control</option>
-              <option value="design" className="bg-blue-500">Design</option>
-              <option value="last_check" className="bg-blue-500">Last Check</option>
-              <option value="ready_to_publish" className="bg-blue-500">Ready to Publish</option>
-              <option value="published" className="bg-blue-500">Published</option>
+              <option value="all" className="bg-blue-500">
+                Status
+              </option>
+              <option value="quality_control" className="bg-blue-500">
+                Quality Control
+              </option>
+              <option value="design" className="bg-blue-500">
+                Design
+              </option>
+              <option value="last_check" className="bg-blue-500">
+                Last Check
+              </option>
+              <option value="ready_to_publish" className="bg-blue-500">
+                Ready to Publish
+              </option>
+              <option value="published" className="bg-blue-500">
+                Published
+              </option>
             </select>
           </div>
           <div className="grid grid-cols-1 gap-4">
-            {data.map((item) => (
-              <DashCards
-                key={item.konten_id}
-                title={item.title}
-                status={item.nama_tahap}
-                orderedBy={item.requester_id}
-                time={item.req_time}
-                kontenId={item.konten_id}  // Pass kontenId
-              />
-            ))}
+            {data.length > 0 ? (
+              data.map((item) => (
+                <DashCards
+                  key={item.konten_id}
+                  title={item.title}
+                  status={tahapMapping[item.tahap_id]}
+                  orderedBy={item.requester_id}
+                  time={formatDate(item.req_time)}
+                  kontenId={item.konten_id}
+                />
+              ))
+            ) : (
+              <div className="text-center text-xl text-blue-900 font-semibold">
+                Belum ada Konten yang Di Request
+              </div>
+            )}
           </div>
         </main>
       </div>
