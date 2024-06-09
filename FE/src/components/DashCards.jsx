@@ -1,31 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const DashCards = ({ title, desc, url, imgSrc }) => {
-    return (
-        <div className="card w-full sm:w-80 bg-white shadow-lg rounded-lg overflow-hidden">
-        <figure className="flex justify-center items-center bg-gray-100">
-            <img
-            src={imgSrc}
-            alt={title}
-            className="w-full h-full"
-            />
-        </figure>
-        <div className="p-4 flex flex-col justify-between h-full">
-            <div>
-            <h2 className="text-2xl font-bold text-blue-900 mb-2">{title}</h2>
-            <p className="text-gray-700 mb-4">{desc}</p>
-            </div>
-            <div className="text-right mt-auto">
-            <Link to={url}>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Telusuri
-                </button>
-            </Link>
-            </div>
-        </div>
-        </div>
-    )
+const DashCards = ({ title, status, orderedBy, time, kontenId }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/detail/${kontenId}`);
+  };
+
+  return (
+    <div onClick={handleCardClick} className="bg-blue-800 text-white rounded-lg p-4 mb-4 cursor-pointer">
+      <h3 className="text-xl font-bold mb-2">{title}</h3>
+      <p className="font-semibold">Status: <span className="font-bold">{status}</span></p>
+      <p className="mt-2">Dipesan Oleh: <span className="font-bold">{orderedBy}</span></p>
+      <p className="mt-2">{time}</p>
+    </div>
+  );
 };
 
 export default DashCards;

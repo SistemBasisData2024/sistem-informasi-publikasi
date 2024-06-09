@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { getKonten } from "../actions/user.actions";
+import { useNavigate } from "react-router-dom";
 import { getUser } from "../actions/user.actions";
-import { fetchMembers } from "../actions/divisi.actions";
+import { fetchMembers, fetchKonten } from "../actions/divisi.actions";
 import NavBar from "../components/NavBar";
+import DashCards from "../components/DashCards";  // Ensure this import is here
+
 const Dashboard = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [userData, setUserData] = useState({});
-  const [members, setMembers]= useState([]);
+  const [members, setMembers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,8 +25,8 @@ const Dashboard = () => {
         }
 
         // Fetch konten data
-        const kontenResponse = await getKonten();
-        if (kontenResponse.data) {
+        const kontenResponse = await fetchKonten();
+        if (kontenResponse.success) {
           setData(kontenResponse.data);
         } else {
           setError("Failed to fetch konten data");
@@ -34,10 +37,9 @@ const Dashboard = () => {
         if (divisiMembers) {
           setMembers(
             Object.values(divisiMembers)
-              .map(member => String(member.username))
+              .map((member) => String(member.username))
               .join("<br>")
           );
-          console.log(divisiMembers);
         } else {
           setError("Failed to fetch members");
         }
@@ -45,7 +47,6 @@ const Dashboard = () => {
         setError("Failed to fetch data");
       } finally {
         setLoading(false);
-        
       }
     };
 
@@ -56,11 +57,10 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500 items-center justify-center">
         <span className="items-center justify-center loading loading-spinner loading-lg text-blue-800"></span>
-        <div className=" to-blue-500 text-3xl text-blue-900 font-bold ">
-        Loading...
+        <div className="to-blue-500 text-3xl text-blue-900 font-bold">
+          Loading...
+        </div>
       </div>
-      </div>
-
     );
   }
 
@@ -76,13 +76,17 @@ const Dashboard = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500">
       <NavBar className="w-full" />
       <div className="flex flex-col md:flex-row flex-grow">
-         {/* Sidebar */}
-         <aside className="glass p-4 w-full md:w-1/4 lg:w-1/5 shadow-lg rounded-lg m-4 flex flex-col items-start">
+        {/* Sidebar */}
+        <aside className="glass p-4 w-full md:w-1/4 lg:w-1/5 shadow-lg rounded-lg m-4 flex flex-col items-start">
           <h2 className="text-2xl font-bold mb-4 text-blue-700">Dashboard Akun</h2>
-          <p className="font-semibold text-blue-700 mb-4">Username: <b>{[userData.username]}</b> </p>
-          <p className="font-semibold text-blue-700 mb-4">Divisi: <b> {[userData.name]} </b> </p>
+          <p className="font-semibold text-blue-700 mb-4">
+            Username: <b>{[userData.username]}</b>{" "}
+          </p>
+          <p className="font-semibold text-blue-700 mb-4">
+            Divisi: <b> {[userData.name]} </b>{" "}
+          </p>
           <p className="font-semibold text-blue-700 mb-4">Akun di Divisi yang sama:</p>
-          <p className="font-semibold text-blue-700 mb-4" dangerouslySetInnerHTML={{ __html: members }} /> 
+          <p className="font-semibold text-blue-700 mb-4" dangerouslySetInnerHTML={{ __html: members }} />
           <button className="w-full bg-red-500 text-white mt-4 py-2 rounded mb-4">Logout</button>
         </aside>
         {/* Main Content */}
@@ -119,15 +123,14 @@ const Dashboard = () => {
           </div>
           <div className="grid grid-cols-1 gap-4">
             {data.map((item) => (
-              <div
+              <DashCards
                 key={item.konten_id}
-                className="p-4 bg-white shadow rounded-lg"
-              >
-                <h3 className="font-bold text-lg">{item.title}</h3>
-                <p>Status: {item.tahap_id}</p>
-                <p>Dipesan Oleh: {item.requester_id}</p>
-                <p>{item.req_time}</p>
-              </div>
+                title={item.title}
+                status={item.nama_tahap}
+                orderedBy={item.requester_id}
+                time={item.req_time}
+                kontenId={item.konten_id}  // Pass kontenId
+              />
             ))}
           </div>
         </main>

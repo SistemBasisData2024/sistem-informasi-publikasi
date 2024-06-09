@@ -26,3 +26,23 @@ export const fetchMembers = async () => {
         return [];
     }
 };
+
+export const fetchKontenDetails = async (kontenId) => {
+  try {
+    const response = await instance.get(`http://localhost:8463/divisi/konten/${kontenId}`);
+    return baseApiResponse(response.data, true);
+  } catch (error) {
+    console.error("Failed to fetch konten details:", error);
+    return baseApiResponse(null, false);
+  }
+};
+
+export const fetchKonten = async () => {
+    try {
+        const response = await instance.get(`http://localhost:8463/divisi/konten`);
+        return baseApiResponse(response.data, true);
+    } catch (error) {
+        console.error("Failed to fetch konten:", error);
+        return baseApiResponse(null, false);
+    }
+};

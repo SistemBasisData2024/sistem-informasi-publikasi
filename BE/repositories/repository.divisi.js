@@ -69,7 +69,10 @@ async function getKontenDetails(req, res) {
   try {
     let konten_id = req.params.konten_id;
     const konten_detail = await pool.query(
-      'SELECT * FROM KONTEN WHERE KONTEN_ID = $1',
+      'SELECT k.*, u.username as requester_username, t.nama_tahap as tahap_nama FROM KONTEN k ' +
+      'JOIN USERS u ON k.requester_id = u.user_id ' +
+      'JOIN TAHAP t ON k.tahap_id = t.id ' +
+      'WHERE k.konten_id = $1',
       [konten_id]
     );
     if (konten_detail.rows.length === 0) {

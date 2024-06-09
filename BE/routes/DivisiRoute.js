@@ -13,6 +13,6 @@ router.get("/",divisiController.getDivisi);
 
 router.get("/",divisiController.searchKonten);
 
-router.get("/konten",divisiController.getKontenDetails);
+router.get("/konten/:konten_id", divisiController.getKontenDetails);
 
 module.exports = router;
