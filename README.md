@@ -6,12 +6,6 @@
 
 <p align="justify">Additionally, the application also includes users with admin roles, who have the ability to perform CRUD operations (Create, Read, Update, Delete) to managing the requests and users. With this feature, admins can easily updating request status and grant admin role to another user.</p>
 
-<p align="justify">Key features of SIP:</p>
-- 📑 Request Publication
-- 🔖 Publication request tracking
-- 📝 Admin privileges for updating request status
-- 📋 Admin privileges for grant admin role to another user
-
 <p align ="center">
   <a href="#language-and-tools">Language and Tools</a> •
   <a href="#features">Features</a> •
@@ -23,7 +17,7 @@
 
 ---
 
-## Language and Tools
+## 🖥️ Language and Tools
 <p align="justify">SIP is built using the following technologies:</p>
 
 ### ```Backend```
@@ -39,7 +33,7 @@
  
 ---
 
-## Features
+## 🔑 Features
 <p align="justify">Here are some features of SIP:</p>
 
 ### ```Admin```
@@ -80,9 +74,9 @@ Users have access to see details of request they choose from dashboard page, all
 
 ---
 
-## Flowchart
+## 📈 Flowchart
 
-  ```SIP User Flowchart ```
+```SIP User Flowchart ```
 
 ![alt text](https://github.com/SistemBasisData2024/sistem-informasi-publikasi/blob/main/Kelengkapan/SIP_Flowchart%20(User).jpeg)
 
@@ -92,9 +86,9 @@ Users have access to see details of request they choose from dashboard page, all
 
 ---
 
-## ERD and UML
+## 📊 ERD and UML
 
-  ```Entity Relational Diagram (ERD)```
+```Entity Relational Diagram (ERD)```
 
 ![alt text](https://github.com/SistemBasisData2024/sistem-informasi-publikasi/blob/main/Kelengkapan/SIP_ERD.jpg)
 
@@ -105,14 +99,60 @@ Users have access to see details of request they choose from dashboard page, all
 
 ---
 
-## Presentation
+## 💽 Installation Guide
 
-  ```Presentation```
-  ![alt text](https://github.com/SistemBasisData2024/sistem-informasi-publikasi/blob/main/Kelengkapan/SIP_PPT.pdf)
+Clone this repository
+
+```
+git clone https://github.com/SistemBasisData2024/sistem-informasi-publikasi.git
+```
+
+```Backend```
+
+- Ensure you're on the right folder (..\sistem-informasi-publikasi\be)
+- Run npm install to install all the dependencies
+  ```
+  npm install
+  ```
+- Test the installation result
+  ```
+  node index
+  ```
+  ![image](https://github.com/SistemBasisData2024/sistem-informasi-publikasi/assets/87708733/e58d7f16-05f3-41ea-a7b1-ade20367bc5d)
+
+```Frontend```
+
+- Create new project with vite and react template
+  ```
+  npm create vite@latest fe -- --template react
+  ```
+- Change directory to frontend folder
+  ```
+  cd fe
+  ```
+- Ensure you're on the right folder (..\sistem-informasi-publikasi\fe)
+- Run npm install to install all the dependencies
+  ```
+  npm install
+  ```
+- Install Tailwind CSS and the properties
+  ```
+  npm install -D tailwindcss postcss autoprefixer
+  ```
+- Initialize Tailwind CSS
+  ```
+  npx tailwindcss init -p
+  ```
+- Test the installation result
+  ```
+  npm run dev
+  ```
+  ![image](https://github.com/SistemBasisData2024/sistem-informasi-publikasi/assets/87708733/a026a192-4314-46f7-a3f3-3bcf034e2c53)
+- Access the website in your browser by navigating to https://localhost:5173
 
 ---
 
-## Contributors
+## 🧑‍💻 Contributors
 
 - [Miranti Anggunsari](https://www.github.com/rantiaaa) - 2106731472
 - [Wendy Dharmawan](https://www.github.com/wn-l1x) - 2206059591
