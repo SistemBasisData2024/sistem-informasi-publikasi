@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { fetchKontenDetails } from "../actions/divisi.actions";
+import { getUserRole, deleteKonten } from "../actions/admin.actions";
 
 function Details() {
   const { kontenId } = useParams();
+  const history = useHistory();
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
@@ -20,8 +23,23 @@ function Details() {
       setLoading(false);
     };
 
+    const checkAdmin = async () => {
+      const role = await getUserRole();
+      setIsAdmin(role === "Admin");
+    };
+
     getData();
+    checkAdmin();
   }, [kontenId]);
+
+  const handleDelete = async () => {
+    const result = await deleteKonten(kontenId);
+    if (result.success) {
+      history.push("/dashboard");
+    } else {
+      setError("Failed to delete konten.");
+    }
+  };
 
   if (loading) {
     return (
@@ -44,6 +62,22 @@ function Details() {
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500">
       <NavBar className="w-full" />
       <div className="flex-grow flex flex-col items-center justify-center">
+        <div className="w-full flex justify-between items-center px-4 py-2">
+          <button
+            onClick={() => history.push("/dashboard")}
+            className="bg-blue-500 text-white py-2 px-4 rounded"
+          >
+            Kembali
+          </button>
+          {isAdmin && (
+            <button
+              onClick={handleDelete}
+              className="bg-red-500 text-white py-2 px-4 rounded"
+            >
+              Delete
+            </button>
+          )}
+        </div>
         <h1 className="text-3xl font-bold text-blue-900 mb-2">{data.title}</h1>
         <h2 className="text-xl text-blue-900 mb-4 font-semibold">
           {data.requester_username}

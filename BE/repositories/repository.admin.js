@@ -189,4 +189,31 @@ async function adminGetUsers(req,res){
   }
 }
 
-module.exports = { adminLogin, adminGrant, adminGetRequest, adminApprove, adminGetUsers };
+async function adminDeleteKonten(req,res){
+  try {
+    const { konten_id } = req.body;
+    let user_id;
+    if (getLoggedInUserId(req)) {
+      user_id = getLoggedInUserId(req);
+    } else {
+      return res.status(440).send("Login session expired");
+    }
+    result = await pool.query("SELECT * FROM USERS WHERE USER_ID = $1", [
+      user_id,
+    ]);
+    if (result.rows.length === 0 || result.rows[0].roles !== "Admin") {
+      return res.status(403).send("Access denied: Admins only");
+    }
+    const deleted = await pool.query("DELETE FROM KONTEN WHERE KONTEN_ID = $1",[konten_id]);
+    if (deleted.rows.length == 0){
+      return res.status(500).send("Failed to delete");
+    }
+    return res.status(200).send("Deleted Successfully");
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
+module.exports = { adminLogin, adminGrant, adminGetRequest, adminApprove, adminGetUsers, adminDeleteKonten };
