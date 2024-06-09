@@ -2,8 +2,10 @@ const express = require("express");
 const noteController = require("../repositories/repository.notes");
 const router = express.Router();
 
-//STARTS WITH /divisi
+//STARTS WITH /notes
 
-router.get("", noteController.getNotes);
+router.post("/get", noteController.getNotes);
+router.post("", noteController.addNote);
+router.get("/tahap", noteController.getTahap);
 
 module.exports = router;

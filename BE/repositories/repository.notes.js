@@ -77,5 +77,19 @@ async function addNote(req, res) {
       res.status(500).send("Internal Server Error");
     }
   }
+
+  async function getTahap(req,res){
+    try{
+      Tahap_list = await pool.query("SELECT * FROM tahap");
+      if (Tahap_list.rows.length == 0){
+        return res.status(404).send("Tahap Not Found");
+      }
+      res.status(200).send(Tahap_list.rows);
+    }
+    catch (error) {
+      console.log(error);
+      res.status(500).send("Internal Server Error");
+    }
+  }
   
-module.exports = { getNotes, addNote };
+module.exports = { getNotes, addNote, getTahap };

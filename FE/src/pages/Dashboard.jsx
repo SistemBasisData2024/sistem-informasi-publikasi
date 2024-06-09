@@ -7,8 +7,6 @@ import { fetchTahap } from "../actions/konten.actions";
 import NavBar from "../components/NavBar";
 import DashCards from "../components/DashCards";
 
-import DashCards from "../components/DashCards";
-
 const Dashboard = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
