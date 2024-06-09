@@ -191,7 +191,8 @@ async function adminGetUsers(req,res){
 
 async function adminDeleteKonten(req,res){
   try {
-    const { konten_id } = req.body;
+    const { konten_id } = req.params;
+    console.log(konten_id);
     let user_id;
     if (getLoggedInUserId(req)) {
       user_id = getLoggedInUserId(req);
@@ -204,8 +205,9 @@ async function adminDeleteKonten(req,res){
     if (result.rows.length === 0 || result.rows[0].roles !== "Admin") {
       return res.status(403).send("Access denied: Admins only");
     }
+    const delete_notes = await pool.query("DELETE FROM NOTES WHERE KONTEN_ID = $1", [konten_id]); 
     const deleted = await pool.query("DELETE FROM KONTEN WHERE KONTEN_ID = $1",[konten_id]);
-    if (deleted.rows.length == 0){
+    if (deleted.rowCount === 0) {
       return res.status(500).send("Failed to delete");
     }
     return res.status(200).send("Deleted Successfully");

@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchKonten, fetchNotes, addNotes } from "../actions/konten.actions";
+import {
+  fetchKonten,
+  fetchNotes,
+  addNotes,
+  fetchTahap,
+} from "../actions/konten.actions";
+import { getUserRole, approve, deleteKonten } from "../actions/admin.actions";
+
 import NavBar from "../components/NavBar";
 
 const formatDate = (isoString) => {
@@ -14,10 +21,11 @@ const formatDate = (isoString) => {
 };
 
 const Detail = () => {
+  const [tahapName, setTahapName] = useState("");
   const [data, setData] = useState([]);
   const [notes, setNotes] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [formData, setFormData] = useState({
     konten_id: "",
@@ -37,9 +45,10 @@ const Detail = () => {
       });
       setNotes(notesResult.data);
     };
-    
+
     const checkAdmin = async () => {
       const role = await getUserRole();
+      console.log(role);
       setIsAdmin(role === "Admin");
     };
 
@@ -47,10 +56,33 @@ const Detail = () => {
     checkAdmin();
   }, [konten_id]);
 
+  useEffect(() => {
+    const fetchTahapName = async (tahapId, setter) => {
+      try {
+        const response = await fetchTahap();
+        const tahapData = response.data;
+        const foundTahap = tahapData.find((t) => t.id === tahapId);
+        console.log("foundTahap:", foundTahap);
+        const namaTahap = foundTahap ? foundTahap.nama_tahap : "";
+        setter(namaTahap);
+      } catch (error) {
+        console.error("Failed to fetch tahap:", error);
+      }
+    };
+
+    if (data.tahap_id) {
+      fetchTahapName(data.tahap_id, setTahapName);
+    }
+  }, [data.tahap_id]);
   if (!data || !notes) {
     return <div>Loading...</div>;
   }
 
+  useEffect(() => {
+    setCurrentStepIndex(steps.indexOf(data.tahap_nama));
+  }, [data.tahap_nama]);
+
+  const steps = ["Quality Control", "Design", "Ready to Publish", "Published"];
   const formattedReqTime = formatDate(data.req_time);
   const formattedUpTime = formatDate(data.up_time);
   const [upDate, upTime] = formattedUpTime.split(" ");
@@ -81,8 +113,8 @@ const Detail = () => {
     }
   };
 
-  const handleDelete = async () => {
-    const result = await deleteKonten(kontenId);
+  const handleDelete = async (konten_id) => {
+    const result = await deleteKonten(konten_id);
     if (result.success) {
       navigate("/dashboard");
     } else {
@@ -97,11 +129,22 @@ const Detail = () => {
       </div>
     );
   }
+  const handleApprove = async () => {
+    const result = await approve(data.konten_id);
+    if (result.success) {
+      // Handle success, e.g., show a success message
+      console.log("Content approved successfully!");
+      window.location.reload(); // Reload the page
+    } else {
+      // Handle failure, e.g., show an error message
+      console.error("Failed to approve content:", result.error);
+    }
+  };
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500">
       <NavBar className="w-full" />
       <div className="flex-grow flex flex-col items-center justify-center">
-        <div className="w-full flex justify-between items-center px-4 py-2">
+        <div className="w-full flex justify-between items-center px-4 py-4">
           <button
             onClick={() => navigate("/dashboard")}
             className="bg-blue-500 text-white py-2 px-4 rounded"
@@ -118,10 +161,22 @@ const Detail = () => {
           )}
         </div>
         <h1 className="text-3xl font-bold text-blue-900 mb-2">{data.title}</h1>
-        <ul className="steps py-8 w-3/5">
+        {/* <ul className="steps py-8 w-3/5">
           <li className="step step-info text-blue-900 font-medium">
             {data.tahap_nama}
           </li>
+        </ul> */}
+        <ul className="steps py-8 w-3/5">
+          {steps.map((step, index) => (
+            <li
+              key={index}
+              className={`step ${
+                index <= currentStepIndex ? "step-info" : ""
+              } text-blue-900 font-medium`}
+            >
+              {step}
+            </li>
+          ))}
         </ul>
         <div className="flex flex-col md:flex-row gap-8 w-full max-w-6xl">
           {/* Data Pemesanan */}
@@ -132,7 +187,7 @@ const Detail = () => {
             <p className="text-gray-700 font-semibold">TANGGAL PEMESANAN</p>
             <p className="mb-4">{formattedReqTime}</p>
             <h2 className="text-2xl font-bold text-blue-900 mb-4">NOTES</h2>
-            <div className="bg-white p-6 rounded-lg shadow-lg mt-4 overflow-y-auto h-96">
+            <div className="bg-white p-6 rounded-lg border border-gray-300 mt-4 overflow-y-auto h-96">
               {notes.map((note) => (
                 <div key={note.note_id} className="mb-2">
                   <p className="text-gray-700">
@@ -176,9 +231,19 @@ const Detail = () => {
             />
           </div>
         </div>
-        <button className="bg-blue-500 text-white py-2 px-6 rounded mt-6">
-          Selesai Quality Control
-        </button>
+
+        {isAdmin && (
+          <div className="">
+            <button
+              onClick={() => handleApprove(data.konten_id)}
+              className="bg-blue-500 text-white py-2 px-6 rounded mt-6 mb-6"
+            >
+              {data.tahap_nama === "Published"
+                ? "Konten sudah Published"
+                : `Selesai ${tahapName}`}
+            </button>
+          </div>
+        )}
       </div>{" "}
       {/* Display notes here */}
     </div>

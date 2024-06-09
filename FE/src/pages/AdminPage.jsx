@@ -45,7 +45,7 @@ const AdminPage = () => {
           <h2 className="text-2xl font-bold text-blue-900 mb-4">User List</h2>
           <ul>
             {users.map(user => (
-              <li key={user.username} className="flex justify-between items-center mb-4">
+              <li key={user.user_id} className="flex justify-between items-center mb-4">
                 <div>
                   <p className="text-xl font-semibold text-blue-900">{user.username}</p>
                   <p className="text-gray-700">{user.email}</p>

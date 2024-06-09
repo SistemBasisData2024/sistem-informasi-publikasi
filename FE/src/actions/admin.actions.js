@@ -17,9 +17,17 @@ export const getUserRole = async () => {
   }
 };
 
-export const deleteKonten = async (kontenId) => {
+export const deleteKonten = async (konten_id) => {
   try {
-    const response = await instance.delete(`/admin/konten/${kontenId}`);
+    console.log(konten_id);
+    const response = await instance.delete(
+      `http://localhost:8463/admin/deleteKonten/${konten_id}`,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
     return baseApiResponse(response.data, true);
   } catch (error) {
     console.error("Error deleting konten:", error);
@@ -29,7 +37,7 @@ export const deleteKonten = async (kontenId) => {
 
 export const getUsers = async () => {
   try {
-    const response = await instance.get("/admin/users");
+    const response = await instance.get(`http://localhost:8463/admin/users`);
     return baseApiResponse(response.data, true);
   } catch (error) {
     console.error("Error getting users:", error);
@@ -39,7 +47,16 @@ export const getUsers = async () => {
 
 export const grantAdmin = async (username) => {
   try {
-    const response = await instance.put("/admin/grant", { username });
+
+    const response = await instance.put(
+      `http://localhost:8463/admin/grant`,
+      {username},
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
     return baseApiResponse(response.data, true);
   } catch (error) {
     console.error("Error granting admin role:", error);
@@ -48,12 +65,29 @@ export const grantAdmin = async (username) => {
 };
 
 export const getAllKonten = async () => {
-    try {
-        const response = await instance.get("/admin/request");
-        return baseApiResponse(response.data, true);
-      } catch (error) {
-        console.error("Error fetching all konten for admin:", error);
-        return baseApiResponse(null, false);
-      }
+  try {
+    const response = await instance.get("http://localhost:8463/admin/request");
+    return baseApiResponse(response.data, true);
+  } catch (error) {
+    console.error("Error fetching all konten for admin:", error);
+    return baseApiResponse(null, false);
+  }
 };
 
+export const approve = async (konten_id) => {
+  try {
+    const response = await instance.put(
+      `http://localhost:8463/admin/approve`,
+      {konten_id},
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    return baseApiResponse(response.data, true);
+  } catch (error) {
+    console.error("Error granting admin role:", error);
+    return baseApiResponse(null, false);
+  }
+};
