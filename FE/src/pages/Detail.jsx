@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchKonten, fetchNotes, addNotes } from "../actions/konten.actions";
+import {
+  fetchKonten,
+  fetchNotes,
+  addNotes,
+  fetchTahap,
+} from "../actions/konten.actions";
+import { getUserRole, approve, deleteKonten } from "../actions/admin.actions";
+
 import NavBar from "../components/NavBar";
 
 const formatDate = (isoString) => {
@@ -14,6 +21,7 @@ const formatDate = (isoString) => {
 };
 
 const Detail = () => {
+  const [tahapName, setTahapName] = useState("");
   const [data, setData] = useState([]);
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,9 +45,10 @@ const Detail = () => {
       });
       setNotes(notesResult.data);
     };
-    
+
     const checkAdmin = async () => {
       const role = await getUserRole();
+      console.log(role);
       setIsAdmin(role === "Admin");
     };
 
@@ -47,6 +56,24 @@ const Detail = () => {
     checkAdmin();
   }, [konten_id]);
 
+  useEffect(() => {
+    const fetchTahapName = async (tahapId, setter) => {
+      try {
+        const response = await fetchTahap();
+        const tahapData = response.data;
+        const foundTahap = tahapData.find((t) => t.id === tahapId);
+        console.log("foundTahap:", foundTahap);
+        const namaTahap = foundTahap ? foundTahap.nama_tahap : "";
+        setter(namaTahap);
+      } catch (error) {
+        console.error("Failed to fetch tahap:", error);
+      }
+    };
+
+    if (data.tahap_id) {
+      fetchTahapName(data.tahap_id, setTahapName);
+    }
+  }, [data.tahap_id]);
   if (!data || !notes) {
     return <div>Loading...</div>;
   }
@@ -81,8 +108,8 @@ const Detail = () => {
     }
   };
 
-  const handleDelete = async () => {
-    const result = await deleteKonten(kontenId);
+  const handleDelete = async (konten_id) => {
+    const result = await deleteKonten(konten_id);
     if (result.success) {
       navigate("/dashboard");
     } else {
@@ -97,6 +124,17 @@ const Detail = () => {
       </div>
     );
   }
+  const handleApprove = async () => {
+    const result = await approve(data.konten_id);
+    if (result.success) {
+      // Handle success, e.g., show a success message
+      console.log("Content approved successfully!");
+      window.location.reload(); // Reload the page
+    } else {
+      // Handle failure, e.g., show an error message
+      console.error("Failed to approve content:", result.error);
+    }
+  };
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500">
       <NavBar className="w-full" />
@@ -110,7 +148,7 @@ const Detail = () => {
           </button>
           {isAdmin && (
             <button
-              onClick={handleDelete}
+              onClick={() => handleDelete(data.konten_id)}
               className="bg-red-500 text-white py-2 px-4 rounded"
             >
               Delete
@@ -176,9 +214,15 @@ const Detail = () => {
             />
           </div>
         </div>
-        <button className="bg-blue-500 text-white py-2 px-6 rounded mt-6">
-          Selesai Quality Control
-        </button>
+
+        {isAdmin && (
+          <button
+            onClick={() => handleApprove(data.konten_id)}
+            className="bg-blue-500 text-white py-2 px-6 rounded mt-6"
+          >
+            Selesai {tahapName}
+          </button>
+        )}
       </div>{" "}
       {/* Display notes here */}
     </div>

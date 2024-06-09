@@ -8,7 +8,8 @@ const adminRoutes = require("./routes/AdminRoute");
 const noteRoutes = require("./routes/NoteRoute");
 const session = require('express-session');
 const corsOptions = {
-    origin: "http://localhost:5173/", 
+    origin: "http://localhost:5173", 
+    methods: "GET,PUT,POST,DELETE,PATCH,OPTIONS",
     credentials: true,
 };
 
@@ -33,6 +34,7 @@ app.use(session({
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
     res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 }); 
