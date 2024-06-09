@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { fetchKontenDetails } from "../actions/divisi.actions";
 import { getUserRole, deleteKonten } from "../actions/admin.actions";
 
 function Details() {
   const { kontenId } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,7 +35,7 @@ function Details() {
   const handleDelete = async () => {
     const result = await deleteKonten(kontenId);
     if (result.success) {
-      history.push("/dashboard");
+      navigate("/dashboard");
     } else {
       setError("Failed to delete konten.");
     }
@@ -64,7 +64,7 @@ function Details() {
       <div className="flex-grow flex flex-col items-center justify-center">
         <div className="w-full flex justify-between items-center px-4 py-2">
           <button
-            onClick={() => history.push("/dashboard")}
+            onClick={() => navigate("/dashboard")}
             className="bg-blue-500 text-white py-2 px-4 rounded"
           >
             Kembali

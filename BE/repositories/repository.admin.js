@@ -216,4 +216,25 @@ async function adminDeleteKonten(req,res){
   }
 }
 
-module.exports = { adminLogin, adminGrant, adminGetRequest, adminApprove, adminGetUsers, adminDeleteKonten };
+async function getUserRole(req, res) {
+  try {
+    let user_id;
+    if (getLoggedInUserId(req)) {
+      user_id = getLoggedInUserId(req);
+    } else {
+      return res.status(440).send("Login session expired");
+    }
+
+    const result = await pool.query("SELECT roles FROM USERS WHERE USER_ID = $1", [user_id]);
+    if (result.rows.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    return res.status(200).send({ role: result.rows[0].roles });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
+module.exports = { adminLogin, adminGrant, adminGetRequest, adminApprove, adminGetUsers, adminDeleteKonten, getUserRole };

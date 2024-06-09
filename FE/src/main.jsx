@@ -10,6 +10,7 @@ import Publikasi from './pages/Publikasi.jsx';
 import Request from './pages/Request.jsx';
 import Dashboard from './pages/Dashboard.jsx'
 import Detail from './pages/Detail.jsx'
+import AdminPage from './pages/AdminPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
   {
     path: 'detail/:konten_id',
     element: <Detail />,
+  },
+  {
+    path: 'admin',
+    element: <AdminPage />,
   },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(

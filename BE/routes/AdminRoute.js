@@ -14,5 +14,9 @@ router.get("/request", adminController.adminGetRequest);
 router.put("/approve", adminController.adminApprove);
 //users
 router.get("/users", adminController.adminGetUsers);
+//deleteKonten
+router.delete("/deleteKonten", adminController.adminDeleteKonten);
+//check role
+router.get("/role", adminController.getUserRole);
 
 module.exports = router;

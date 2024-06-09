@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../actions/user.actions";
 import { fetchMembers, fetchKonten } from "../actions/divisi.actions";
+import { getUserRole, getAllKonten } from "../actions/admin.actions";
 import NavBar from "../components/NavBar";
-import DashCards from "../components/DashCards";  // Ensure this import is here
+import DashCards from "../components/DashCards";
+
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -24,12 +26,23 @@ const Dashboard = () => {
           setError("Failed to fetch user data");
         }
 
-        // Fetch konten data
-        const kontenResponse = await fetchKonten();
-        if (kontenResponse.success) {
-          setData(kontenResponse.data);
+        const role = await getUserRole();
+        if (role === "Admin") {
+          // Fetch all konten for admin
+          const kontenResponse = await getAllKonten();
+          if (kontenResponse.success) {
+            setData(kontenResponse.data);
+          } else {
+            setError("Failed to fetch konten data for admin");
+          }
         } else {
-          setError("Failed to fetch konten data");
+          // Fetch konten data for regular user
+          const kontenResponse = await fetchKonten();
+          if (kontenResponse.success) {
+            setData(kontenResponse.data);
+          } else {
+            setError("Failed to fetch konten data");
+          }
         }
 
         // Fetch members
