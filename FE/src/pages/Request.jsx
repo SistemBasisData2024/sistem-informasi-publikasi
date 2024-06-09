@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { request } from "../actions/konten.actions";
+import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
+import { imageDb } from "../actions/firebase";
+import { v4 } from "uuid";
 
 const Request = () => {
   const [formData, setFormData] = useState({
@@ -10,8 +13,8 @@ const Request = () => {
     insidental: false,
     kanal: "",
     notes: "",
-    file_path: "",
   });
+  const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -30,16 +33,34 @@ const Request = () => {
     });
   };
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!formData.title || !formData.up_time || formData.insidental === "" || !formData.kanal || !formData.file_path) {
+      if (
+        !formData.title ||
+        !formData.up_time ||
+        formData.insidental === "" ||
+        !formData.kanal
+      ) {
         setMessage("All starred fields are required.");
         return;
       }
 
-      const response = await request(formData);
-      if (response.data.success) {
+      let updatedFormData = { ...formData };
+
+      if (file) {
+        const ImageRef = ref(imageDb, `files/${v4()}`);
+        await uploadBytes(ImageRef, file);
+        const fileURL = await getDownloadURL(ImageRef);
+        updatedFormData = { ...formData, file_path: fileURL };
+      }
+
+      const response = await request(updatedFormData);
+      if (response.success) {
         setMessage("Request submission successful!");
         navigate("/dashboard");
       } else {
@@ -47,18 +68,18 @@ const Request = () => {
       }
     } catch (err) {
       console.error(err);
-      setMessage('An error occurred. Please try again.');
+      setMessage("An error occurred. Please try again.");
     }
   };
 
   const badges = [
-    { label: 'IG Feed', className: 'btn btn-outline' },
-    { label: 'IG Story', className: 'btn btn-outline' },
-    { label: 'TikTok', className: 'btn btn-outline' },
-    { label: 'Twitter/X', className: 'btn btn-outline' },
-    { label: 'Line OA', className: 'btn btn-outline' },
-    { label: 'YouTube', className: 'btn btn-outline' },
-    { label: 'LinkedIn', className: 'btn btn-outline' },
+    { label: "IG Feed", className: "btn btn-outline" },
+    { label: "IG Story", className: "btn btn-outline" },
+    { label: "TikTok", className: "btn btn-outline" },
+    { label: "Twitter/X", className: "btn btn-outline" },
+    { label: "Line OA", className: "btn btn-outline" },
+    { label: "YouTube", className: "btn btn-outline" },
+    { label: "LinkedIn", className: "btn btn-outline" },
   ];
 
   return (
@@ -117,14 +138,12 @@ const Request = () => {
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-white mb-2">Tautan Konten *</label>
+            <label className="block text-white mb-2">Upload File</label>
             <input
-              type="text"
+              type="file"
               name="file_path"
-              value={formData.file_path}
-              onChange={handleRequest}
+              onChange={handleFileChange}
               className="w-full p-2 border border-white-900 rounded bg-transparent"
-              required
             />
           </div>
           <div className="mb-4">
@@ -134,7 +153,9 @@ const Request = () => {
                 <button
                   type="button"
                   key={badge.label}
-                  className={`${badge.className} ${formData.kanal === badge.label ? 'btn-active' : ''}`}
+                  className={`${badge.className} ${
+                    formData.kanal === badge.label ? "btn-active" : ""
+                  }`}
                   onClick={() => handleBadgeClick(badge.label)}
                 >
                   {badge.label}
@@ -153,7 +174,8 @@ const Request = () => {
           </div>
           <button
             type="submit"
-            className="w-full rounded-md bg-red-500 text-white py-2 mt-8">
+            className="w-full rounded-md bg-red-500 text-white py-2 mt-8"
+          >
             Request Publikasi
           </button>
         </form>
