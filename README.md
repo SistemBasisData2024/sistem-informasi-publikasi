@@ -40,37 +40,37 @@
 
 + View Database of Contents
 
-As an admin, they can access and view the database of request information, where they can see all of the request from all users.
+  As an admin, they can access and view the database of request information, where they can see all of the request from all users.
 
 + Manage Request Status
 
-Admins have the ability to update the status of request publication. Such as updating Quality Control status to Design status.
+  Admins have the ability to update the status of request publication. Such as updating Quality Control status to Design status.
 
 + View Database of Users
 
-Admins can access and view the database of user information, including username, email, and user's division.
+  Admins can access and view the database of user information, including username, email, and user's division.
 
 + Grant Admin Role
 
-Admins have the privilege to grant admin role and privilege to another user in the system.
+  Admins have the privilege to grant admin role and privilege to another user in the system.
 
 ### ```Users```
 
 + Register a New Account
 
-Users can register on the website by creating an account, allowing them to login and make a publication request.
+  Users can register on the website by creating an account, allowing them to login and make a publication request.
 
 + Submit Publication Request Form
 
-Users can request a publication by providing details of the content such as publication title, date and time of publication, social media, and content file path.
+  Users can request a publication by providing details of the content such as publication title, date and time of publication, social media, and content file path.
 
 + View Publication Request List
 
-Through the dashboard page, users can view all the request publication that requested by another user from the same division as them. This allows them to track the request status.
+  Through the dashboard page, users can view all the request publication that requested by another user from the same division as them. This allows them to track the request status.
 
 + View Request Detail
 
-Users have access to see details of request they choose from dashboard page, allowing them to get detail information such as title, ppublishing time, social media, requester detail, and current status of the request.
+  Users have access to see details of request they choose from dashboard page, allowing them to get detail information such as title, ppublishing time, social media, requester detail, and current status of the request.
 
 ---
 
@@ -156,6 +156,6 @@ git clone https://github.com/SistemBasisData2024/sistem-informasi-publikasi.git
 
 - [Miranti Anggunsari](https://www.github.com/rantiaaa) - 2106731472
 - [Wendy Dharmawan](https://www.github.com/wn-l1x) - 2206059591
-- [Valentino Farish Ardhan] - 2206825896
+- Valentino Farish Ardhan - 2206825896
 
 ---
