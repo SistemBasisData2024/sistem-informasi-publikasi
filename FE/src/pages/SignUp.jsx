@@ -39,7 +39,7 @@ const SignUp = () => {
   const handleDivisiSelect = (divisi) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      divisi: divisi.id,
+      divisi: divisi.name, // Update to save the divisi name
     }));
   };
 
@@ -100,7 +100,7 @@ const SignUp = () => {
             <Dropdown
               items={divisiList}
               onSelect={handleDivisiSelect}
-              selected={divisiList.find((item) => item.id === formData.divisi)}
+              selected={divisiList.find((item) => item.name === formData.divisi)} // Update to find by name
             />
           </div>
           <div className="mb-8">

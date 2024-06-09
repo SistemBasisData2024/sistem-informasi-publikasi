@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Dropdown = ({ items, onSelect, selected }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownSelected, setDropdownSelected] = useState(selected ? selected.name : "Select Divisi");
+
+  useEffect(() => {
+    if (selected) {
+      setDropdownSelected(selected.name);
+    }
+  }, [selected]);
 
   const handleHover = () => {
     setIsOpen(true);
@@ -31,9 +37,7 @@ const Dropdown = ({ items, onSelect, selected }) => {
         <span className="mr-2">{dropdownSelected}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className={`h-4 w-4 transition-transform ${
-            isOpen ? "-rotate-180" : "rotate-0"
-          }`}
+          className={`h-4 w-4 transition-transform ${isOpen ? "-rotate-180" : "rotate-0"}`}
           viewBox="0 0 20 20"
           fill="currentColor"
         >
