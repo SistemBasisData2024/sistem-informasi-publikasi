@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const Dropdown = ({ items, onSelect, selected }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [dropdownSelected, setDropdownSelected] = useState("Select Divisi");
+  const [dropdownSelected, setDropdownSelected] = useState(selected ? selected.name : "Select Divisi");
 
   const handleHover = () => {
     setIsOpen(true);
@@ -28,7 +28,7 @@ const Dropdown = ({ items, onSelect, selected }) => {
         tabIndex={0}
         className="bg-gray-100 text-gray-900 px-4 py-2 rounded-lg focus:outline-none focus:ring focus:border-blue-400 w-full flex justify-between items-center"
       >
-        <span className="mr-2">{dropdownSelected}</span> {/* Display selected divisi */}
+        <span className="mr-2">{dropdownSelected}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className={`h-4 w-4 transition-transform ${
@@ -44,7 +44,7 @@ const Dropdown = ({ items, onSelect, selected }) => {
         </svg>
       </button>
       {isOpen && (
-        <ul className="absolute z-10 top-full left-0 w-full bg-gray-100 border border-gray-300 rounded-b-lg shadow-lg">
+        <ul className="absolute z-10 top-full left-0 w-full bg-gray-100 border border-gray-300 rounded-b-lg shadow-lg max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {Array.isArray(items) &&
             items.map((item, index) => (
               <li key={index}>

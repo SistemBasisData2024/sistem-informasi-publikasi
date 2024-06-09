@@ -37,16 +37,13 @@ const SignUp = () => {
   };
 
   const handleDivisiSelect = (divisi) => {
-    console.log(divisi);
     setFormData((prevFormData) => ({
       ...prevFormData,
-      divisi: divisi.name,
+      divisi: divisi.id,
     }));
-    
   };
 
   const handleSubmit = async (e) => {
-    console.log(formData)
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password || !formData.divisi) {
       setMessage("All fields are required: username, email, password, divisi");
@@ -103,7 +100,7 @@ const SignUp = () => {
             <Dropdown
               items={divisiList}
               onSelect={handleDivisiSelect}
-              selected={divisiList.find(item => item.id === formData.divisi)} 
+              selected={divisiList.find((item) => item.id === formData.divisi)}
             />
           </div>
           <div className="mb-8">
