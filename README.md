@@ -143,6 +143,7 @@ git clone https://github.com/SistemBasisData2024/sistem-informasi-publikasi.git
   ```
   npx tailwindcss init -p
   ```
+- Copy public and src folder from github to your FE folder
 - Test the installation result
   ```
   npm run dev
