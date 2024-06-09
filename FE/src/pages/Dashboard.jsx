@@ -64,13 +64,17 @@ const Dashboard = () => {
           }
         }
           // Fetch konten data
-          const kontenResponse = await fetchKonten();
-          if (kontenResponse.success) {
-            setData(kontenResponse.data);
-
-          } else {
-            setError("Failed to fetch konten data");
-          }
+          // const kontenResponse = await fetchKonten();
+          // if (kontenResponse.success) {
+          //   if (kontenResponse.data) {
+          //     setData(kontenResponse.data);
+          //   } else {
+          //     setData([]);
+          //     setError("No konten available");
+          //   }
+          // } else {
+          //   setError("Failed to fetch konten data");
+          // }
 
           // Fetch tahap data
           const tahapResponse = await fetchTahap();
@@ -89,7 +93,7 @@ const Dashboard = () => {
       } catch (err) {
         setError("Failed to fetch data");
       } finally {
-        setLoading(false); // Move setLoading(false) here
+        setLoading(false); 
       }
     };
 

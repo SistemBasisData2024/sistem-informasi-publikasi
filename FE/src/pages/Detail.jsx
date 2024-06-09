@@ -21,6 +21,8 @@ const formatDate = (isoString) => {
 };
 
 const Detail = () => {
+  const [selectedTahapId, setSelectedTahapId] = useState("");
+  const [tahaps, setTahaps] = useState([]);
   const [tahapName, setTahapName] = useState("");
   const [data, setData] = useState([]);
   const [notes, setNotes] = useState([]);
@@ -61,6 +63,7 @@ const Detail = () => {
       try {
         const response = await fetchTahap();
         const tahapData = response.data;
+        setTahaps(tahapData);
         const foundTahap = tahapData.find((t) => t.id === tahapId);
         console.log("foundTahap:", foundTahap);
         const namaTahap = foundTahap ? foundTahap.nama_tahap : "";
@@ -77,6 +80,24 @@ const Detail = () => {
   if (!data || !notes) {
     return <div>Loading...</div>;
   }
+  const handleTahapChange = async (e) => {
+    const selectedTahapId = e.target.value;
+    setSelectedTahapId(selectedTahapId);
+  
+    try {
+      const notesResult = await fetchNotes({
+        konten_id,
+        tahap_id: selectedTahapId,
+      });
+      setNotes(notesResult.data);
+    } catch (error) {
+      console.error("Failed to fetch notes:", error);
+    }
+  };
+
+  const filteredNotes = selectedTahapId
+    ? notes.filter((note) => note.tahap_id === selectedTahapId)
+    : notes;
 
   useEffect(() => {
     setCurrentStepIndex(steps.indexOf(data.tahap_nama));
@@ -108,6 +129,7 @@ const Detail = () => {
         },
       ]);
       setFormData({ ...formData, notes: "" });
+      window.location.reload(); // Reload the page
     } else {
       console.error("Failed to add notes:", response.error);
     }
@@ -187,8 +209,29 @@ const Detail = () => {
             <p className="text-gray-700 font-semibold">TANGGAL PEMESANAN</p>
             <p className="mb-4">{formattedReqTime}</p>
             <h2 className="text-2xl font-bold text-blue-900 mb-4">NOTES</h2>
+            <div className="flex items-center mb-4">
+              <label htmlFor="tahapDropdown" className="mr-2">
+                Select Tahap:
+              </label>
+              <select
+                id="tahapDropdown"
+                className="bg-gray-100 border border-gray-300 rounded-lg px-4 py-2"
+                value={selectedTahapId}
+                onChange={handleTahapChange}
+              >
+                {tahaps.map((tahap) => (
+                  <option
+                    key={tahap.id}
+                    value={tahap.id}
+                    selected={data.tahap_id === tahap.id}
+                  >
+                    {tahap.nama_tahap}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="bg-white p-6 rounded-lg border border-gray-300 mt-4 overflow-y-auto h-96">
-              {notes.map((note) => (
+              {filteredNotes.map((note) => (
                 <div key={note.note_id} className="mb-2">
                   <p className="text-gray-700">
                     {formatDate(note.note_date)} - {note.notes}
