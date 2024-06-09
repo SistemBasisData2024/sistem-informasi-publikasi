@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const DashCards = ({ title, status, orderedBy, time, konten_id }) => {
+const DashCards = ({ title, status, orderedBy, time, kontenId }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/detail/${konten_id}`);
+    navigate(`/detail/${kontenId}`);
   };
 
   return (

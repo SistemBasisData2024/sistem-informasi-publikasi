@@ -205,19 +205,4 @@ async function getUserById(req, res) {
   }
 }
 
-async function logout(req, res) {
-  try {
-    req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).send("Logout failed");
-      }
-      res.clearCookie("sessionId"); 
-      res.status(200).send("Logout successful");
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Internal Server Error");
-  }
-}
-
-module.exports = { signup, login, logout, request_post, request_get, getUserById };
+module.exports = { signup, login, request_post, request_get, getUserById };

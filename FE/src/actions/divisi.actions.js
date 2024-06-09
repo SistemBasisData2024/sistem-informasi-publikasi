@@ -27,9 +27,9 @@ export const fetchMembers = async () => {
     }
 };
 
-export const fetchKontenDetails = async (konten_id) => {
+export const fetchKontenDetails = async (kontenId) => {
   try {
-    const response = await instance.get(`http://localhost:8463/divisi/konten/${konten_id}`);
+    const response = await instance.get(`http://localhost:8463/divisi/konten/${kontenId}`);
     return baseApiResponse(response.data, true);
   } catch (error) {
     console.error("Failed to fetch konten details:", error);

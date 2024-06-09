@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUser, logoutUser } from "../actions/user.actions";
+import { getUser } from "../actions/user.actions";
 import { fetchMembers, fetchKonten } from "../actions/divisi.actions";
 import { getUserRole, getAllKonten } from "../actions/admin.actions";
 import { fetchTahap } from "../actions/konten.actions";
@@ -14,7 +14,6 @@ const Dashboard = () => {
   const [userData, setUserData] = useState({});
   const [members, setMembers] = useState([]);
   const [tahapMapping, setTahapMapping] = useState({});
-  const [selectedStatus, setSelectedStatus] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -107,15 +106,6 @@ const Dashboard = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
-  const handleLogout = async () => {
-    try {
-      await logoutUser(); 
-      navigate("/"); 
-    } catch (error) {
-      setError("Failed to logout");
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-r from-green-200 to-blue-500 items-center justify-center">
@@ -157,9 +147,7 @@ const Dashboard = () => {
             className="font-semibold text-blue-700 mb-4"
             dangerouslySetInnerHTML={{ __html: members }}
           />
-          <button 
-            className="w-full bg-red-500 text-white mt-4 py-2 rounded mb-4"
-            onClick={handleLogout}>
+          <button className="w-full bg-red-500 text-white mt-4 py-2 rounded mb-4">
             Logout
           </button>
         </aside>
@@ -188,9 +176,7 @@ const Dashboard = () => {
                 />
               </svg>
             </div>
-            <select className="py-2 px-4 border border-gray-100 rounded bg-transparent text-white"
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              value={selectedStatus}>
+            <select className="py-2 px-4 border border-gray-100 rounded bg-transparent text-white">
               <option value="all" className="bg-blue-500">
                 Status
               </option>
@@ -220,7 +206,7 @@ const Dashboard = () => {
                   status={tahapMapping[item.tahap_id]}
                   orderedBy={item.requester_id}
                   time={formatDate(item.req_time)}
-                  konten_id={item.konten_id}
+                  kontenId={item.konten_id}
                 />
               ))
             ) : (

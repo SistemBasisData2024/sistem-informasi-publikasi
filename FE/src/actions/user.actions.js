@@ -69,9 +69,7 @@ export const request = async (formData) => {
 
 export const getKonten = async () => {
   try {
-    const response = await instance.get(
-      "http://localhost:8463/user/request_get"
-    );
+    const response = await instance.get("http://localhost:8463/user/request_get");
     return response;
   } catch (error) {
     console.error("Failed to fetch data:", error);
@@ -90,14 +88,3 @@ export const getUser = async () => {
   }
 };
 
-export const logoutUser = async () => {
-  try {
-    const response = await instance.post("http://localhost:8463/user/logout");
-    if (response.status === 200) {
-      localStorage.removeItem("authToken");
-      sessionStorage.clear();
-    }
-  } catch (error) {
-    console.error("Error logging out", error);
-  }
-};
